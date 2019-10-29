@@ -39,7 +39,14 @@
 </template>
 
 <script>
-import { USER_GENDER_OPTIONS } from '../../../../constants/user';
+import {
+  USER_GENDER_OPTIONS,
+  USER_NAME_TIP,
+  USER_PASSWORD_TIP,
+  USER_PASSWORD_NOT_SAME_TIP,
+  USER_REPEAT_PASSWORD_TIP,
+  USER_NAME_ISEXIST_TIP,
+} from '../../../../constants/user';
 import UserService from '../../../../domains/user/UserService';
 
 export default {
@@ -71,14 +78,14 @@ export default {
   },
   methods: {
     validUserIsExist(rule, value, callback) {
-      if (!value) return callback(new Error('请输入用户名'));
+      if (!value) return callback(new Error(USER_NAME_TIP));
       return UserService.userIsExist(value).then((isExist) => {
-        if (isExist) callback(new Error('用户名已存在'));
+        if (isExist) callback(new Error(USER_NAME_ISEXIST_TIP));
         else callback();
       });
     },
     validPassword(rule, value, callback) {
-      if (!value) return callback(new Error('请输入密码'));
+      if (!value) return callback(new Error(USER_PASSWORD_TIP));
 
       if (this.form.repeatPassword !== '') {
         this.$refs.form.validateField('repeatPassword');
@@ -86,9 +93,9 @@ export default {
       return callback();
     },
     validRepeatPassword(rule, value, callback) {
-      if (!value) return callback(new Error('请再次输入密码'));
+      if (!value) return callback(new Error(USER_REPEAT_PASSWORD_TIP));
       if (value !== this.form.password) {
-        return callback(new Error('两次密码输入不一致'));
+        return callback(new Error(USER_PASSWORD_NOT_SAME_TIP));
       } return callback();
     },
   },
