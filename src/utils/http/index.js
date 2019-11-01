@@ -2,6 +2,9 @@ const axios = require('axios').default;
 
 const instance = axios.create({
   baseURL: 'http://localhost:7000',
+  validateStatus(status) {
+    return status >= 200 && status < 500;
+  },
 });
 
 instance.interceptors.response.use(
@@ -9,10 +12,9 @@ instance.interceptors.response.use(
     const { data } = response;
     if (+data.errno === 0) return data.data;
 
-    if (data.message) return Promise.reject(new Error(data.message));
-    return Promise.reject(new Error('请求错误'));
+    return Promise.reject(new Error(data.message || '请求错误'));
   },
-  error => Promise.reject(error),
+  () => Promise.reject(new Error('服务器错误')),
 );
 
 export default instance;
