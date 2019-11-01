@@ -77,26 +77,24 @@ export default {
     },
   },
   methods: {
-    validUserIsExist(rule, value, callback) {
-      if (!value) return callback(new Error(USER_NAME_TIP));
-      return UserService.userIsExist(value).then((isExist) => {
-        if (isExist) callback(new Error(USER_NAME_ISEXIST_TIP));
-        else callback();
-      });
+    async validUserIsExist(rule, value) {
+      if (!value) throw new Error(USER_NAME_TIP);
+      const isExist = await UserService.userIsExist(value);
+      if (isExist) throw new Error(USER_NAME_ISEXIST_TIP);
     },
-    validPassword(rule, value, callback) {
-      if (!value) return callback(new Error(USER_PASSWORD_TIP));
+    validPassword(rule, value) {
+      if (!value) return Promise.reject(new Error(USER_PASSWORD_TIP));
 
       if (this.form.repeatPassword !== '') {
         this.$refs.form.validateField('repeatPassword');
       }
-      return callback();
+      return Promise.resolve();
     },
-    validRepeatPassword(rule, value, callback) {
-      if (!value) return callback(new Error(USER_REPEAT_PASSWORD_TIP));
+    validRepeatPassword(rule, value) {
+      if (!value) return Promise.reject(new Error(USER_REPEAT_PASSWORD_TIP));
       if (value !== this.form.password) {
-        return callback(new Error(USER_PASSWORD_NOT_SAME_TIP));
-      } return callback();
+        return Promise.reject(new Error(USER_PASSWORD_NOT_SAME_TIP));
+      } return Promise.resolve();
     },
   },
 };
