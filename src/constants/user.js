@@ -10,6 +10,8 @@ export const USER_GENDER_OPTIONS = (() => {
   return genders;
 })();
 
+export const USER_TOKEN_KEY = `__${process.env.NODE_ENV}_user_token__`;
+
 export const USER_NAME_ISEXIST_TIP = '用户名已存在';
 export const USER_NAME_TIP = '请输入用户名';
 export const USER_PASSWORD_TIP = '请输入密码';
