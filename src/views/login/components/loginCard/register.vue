@@ -33,7 +33,12 @@
       </el-radio-group>
     </el-form-item>
     <el-form-item>
-      <el-button style="width: 100%;" type="primary">注册</el-button>
+      <el-button
+        :loading="loading"
+        @click="handleRegister"
+        style="width: 100%;"
+        type="primary"
+      >注册</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -48,10 +53,12 @@ import {
   USER_NAME_ISEXIST_TIP,
 } from '../../../../constants/user';
 import UserService from '../../../../domains/user/UserService';
+import UserLocal from '../../../../domains/user/UserLocal';
 
 export default {
   data() {
     return {
+      loading: false,
       form: {
         userName: '',
         password: '',
@@ -77,6 +84,18 @@ export default {
     },
   },
   methods: {
+    async handleRegister() {
+      this.loading = true;
+      const valid = await this.$refs.form.validate();
+      if (valid) await this.register();
+      this.loading = false;
+    },
+    async register() {
+      const { userName, password, gender } = this.form;
+      const payload = { userName, password, gender };
+      const token = await UserService.registerUser(payload);
+      UserLocal.setUserToken(token);
+    },
     async validUserIsExist(rule, value) {
       if (!value) throw new Error(USER_NAME_TIP);
       const isExist = await UserService.userIsExist(value);
