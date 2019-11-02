@@ -1,4 +1,5 @@
-const axios = require('axios').default;
+import axios from 'axios';
+import UserLocal from '../../domains/user/UserLocal';
 
 const instance = axios.create({
   baseURL: 'http://localhost:7000',
@@ -6,6 +7,20 @@ const instance = axios.create({
     return status >= 200 && status < 500;
   },
 });
+
+instance.interceptors.request.use(
+  (config) => {
+    const token = UserLocal.getUserToken();
+    if (token) {
+      const { headers } = config;
+      Object.defineProperty(headers, 'jwt-token', {
+        value: token,
+      });
+    }
+    return config;
+  },
+  error => Promise.reject(error),
+);
 
 instance.interceptors.response.use(
   (response) => {
