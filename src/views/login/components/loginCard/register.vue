@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import { Message } from 'element-ui';
 import {
   USER_GENDER_OPTIONS,
   USER_NAME_TIP,
@@ -51,6 +52,8 @@ import {
   USER_PASSWORD_NOT_SAME_TIP,
   USER_REPEAT_PASSWORD_TIP,
   USER_NAME_ISEXIST_TIP,
+  USER_NAME_INVALID_TIP,
+  USER_PASSWORD_INVALID_TIP,
 } from '../../../../constants/user';
 import UserService from '../../../../domains/user/UserService';
 import UserLocal from '../../../../domains/user/UserLocal';
@@ -63,7 +66,7 @@ export default {
         userName: '',
         password: '',
         repeatPassword: '',
-        gender: '1',
+        gender: 1,
       },
       rules: {
         userName: [
@@ -93,20 +96,30 @@ export default {
     async register() {
       const { userName, password, gender } = this.form;
       const payload = { userName, password, gender };
-      const token = await UserService.registerUser(payload);
-      UserLocal.setUserToken(token);
+      const [error, token] = await UserService.registerUser(payload);
+      if (error) Message.error(error.message);
+      if (token) UserLocal.setUserToken(token);
     },
     async validUserIsExist(rule, value) {
       if (!value) throw new Error(USER_NAME_TIP);
-      const isExist = await UserService.userIsExist(value);
+      if ((value && value.length < 6)
+        || (value && value.length > 20)
+        || (value && !/^[a-zA-Z][a-zA-Z0-0_]+$/.test(value))) {
+        throw new Error(USER_NAME_INVALID_TIP);
+      }
+      const [error, isExist] = await UserService.userIsExist(value);
+      if (error) throw new Error(error.message);
       if (isExist) throw new Error(USER_NAME_ISEXIST_TIP);
     },
     validPassword(rule, value) {
       if (!value) return Promise.reject(new Error(USER_PASSWORD_TIP));
-
       if (this.form.repeatPassword !== '') {
         this.$refs.form.validateField('repeatPassword');
       }
+      if (!(value.length >= 6 && value.length <= 255)) {
+        return Promise.reject(new Error(USER_PASSWORD_INVALID_TIP));
+      }
+
       return Promise.resolve();
     },
     validRepeatPassword(rule, value) {
