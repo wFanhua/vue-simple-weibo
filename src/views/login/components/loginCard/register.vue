@@ -56,7 +56,6 @@ import {
   USER_PASSWORD_INVALID_TIP,
 } from '../../../../constants/user';
 import UserService from '../../../../domains/user/UserService';
-import UserLocal from '../../../../domains/user/UserLocal';
 
 export default {
   data() {
@@ -98,7 +97,7 @@ export default {
       const payload = { userName, password, gender };
       const [error, token] = await UserService.registerUser(payload);
       if (error) Message.error(error.message);
-      if (token) UserLocal.setUserToken(token);
+      if (token) this.$emit('register', { token });
     },
     async validUserIsExist(rule, value) {
       if (!value) throw new Error(USER_NAME_TIP);
@@ -127,6 +126,9 @@ export default {
       if (value !== this.form.password) {
         return Promise.reject(new Error(USER_PASSWORD_NOT_SAME_TIP));
       } return Promise.resolve();
+    },
+    resetFields() {
+      this.$refs.form.resetFields();
     },
   },
 };
