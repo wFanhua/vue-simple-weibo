@@ -1,5 +1,21 @@
 import {
-  Button, Select, Card, Tabs, TabPane, Form, FormItem, Input, Radio, RadioGroup,
+  Button,
+  Select,
+  Card,
+  Tabs,
+  TabPane,
+  Form,
+  FormItem,
+  Input,
+  Radio,
+  RadioGroup,
+  Container,
+  Header,
+  Main,
+  Footer,
+  Menu,
+  MenuItem,
+  MenuItemGroup,
 } from 'element-ui';
 import Vue from 'vue';
 import App from './app.vue';
@@ -16,6 +32,13 @@ Vue.component(FormItem.name, FormItem);
 Vue.component(Input.name, Input);
 Vue.component(Radio.name, Radio);
 Vue.component(RadioGroup.name, RadioGroup);
+Vue.component(Container.name, Container);
+Vue.component(Header.name, Header);
+Vue.component(Main.name, Main);
+Vue.component(Footer.name, Footer);
+Vue.component(Menu.name, Menu);
+Vue.component(MenuItem.name, MenuItem);
+Vue.component(MenuItemGroup.name, MenuItemGroup);
 
 
 Vue.config.productionTip = false;
